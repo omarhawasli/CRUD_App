@@ -44,14 +44,44 @@ public class Database {
                     System.out.print(" - ");
                     System.out.print(resultSet.getString("preis") + "€");
                     System.out.print(" - ");
-                    System.out.print(resultSet.getString("beschreibung"));
-                    System.out.print(" |--| ");
+                    System.out.println(resultSet.getString("beschreibung"));
+//                    System.out.print(" |--| ");
                 }
 
             }catch(SQLException e){
                 System.out.println(e);
             }
         }
+
+        public Produkt getProduktByID(int id){
+            try{
+                String sql = "SELECT * FROM produkte WHERE id="+ id +";";
+
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql);
+
+
+                while(resultSet.next()) {
+
+                    int pid = resultSet.getInt("id");
+                    String produktname = resultSet.getString("produkte_name");
+                    double preis = resultSet.getDouble("preis");
+                    String beschreibung = resultSet.getString("beschreibung");
+
+                    Produkt produkt = new Produkt(pid, produktname, preis, beschreibung);
+                    return produkt;
+
+                }
+
+                return null;
+
+            }catch(SQLException e){
+                System.out.println(e);
+                return null;
+            }
+
+        }
+
 
         public void creat(Produkt neuesProdukt){
             try{

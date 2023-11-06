@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class Myapp {
@@ -5,16 +6,14 @@ public class Myapp {
 
     Database database = new Database();
     boolean weiter = false;
+//    private Random input;
 
 
-
-    public Myapp(){
+    public Myapp() {
         database.connect();
     }
 
-    public void Hauptmenu(){
-
-        database.connect();
+    public void Hauptmenu() {
 
 
         System.out.println("Wählen Sie bitte: ");
@@ -26,29 +25,28 @@ public class Myapp {
         int eingabe = scanner.nextInt();
 
 
-
-
-        switch (eingabe){
+        switch (eingabe) {
             case 1:
-                    Read();
+                Read();
                 break;
             case 2:
-                    Creat();
+                Creat();
                 break;
             case 3:
-                    Update();
+                Update();
                 break;
             case 4:
-                    Delete();
+                Delete();
                 break;
         }
     }
 
-    public void Read(){
+    public void Read() {
         database.read();
     }
-    public void Creat(){
-        do{\
+
+    public void Creat() {
+        do {
 
             System.out.println("Geben Sie bitte ein Produkt Name an: ");
             String produkte_name = String.valueOf(scanner.next());
@@ -62,7 +60,7 @@ public class Myapp {
             String beschreibung = String.valueOf(scanner.next());
             scanner.nextLine();
 
-            Produkt produkt = new Produkt(produkte_name,preis,beschreibung);
+            Produkt produkt = new Produkt(produkte_name, preis, beschreibung);
             database.creat(produkt);
 
 
@@ -70,55 +68,77 @@ public class Myapp {
 
             String antwort = scanner.next().toLowerCase();
 
-            if(antwort.equals("y")){
+            if (antwort.equals("y")) {
                 weiter = false;
-            }else if (antwort.equals("n")){
+            } else if (antwort.equals("n")) {
                 weiter = true;
-            }else {
+            } else {
                 System.out.println("Geben Sie: Y/N");
             }
 
-        }while(!weiter);
+        } while (!weiter);
     }
-    public void Update(){
-        do{
+
+    public void Update() {
+        do {
 
             database.read();
 
+
             System.out.println("Geben Sie bitte neue Informationen an: ");
-            System.out.println("Geben Sie bitte ein ID an: ");
+
+            System.out.println("wählen Sie  die ID an: ");
             int id = scanner.nextInt();
 
-            System.out.println("Geben Sie bitte ein Produkt Name an: ");
-            String updateProduktname = String.valueOf(scanner.next());
-            scanner.nextLine();
+            Produkt produkt = database.getProduktByID(id);
 
-            System.out.println("Geben Sie bitte ein Preis an");
-            double updatePreis = Double.valueOf(scanner.nextDouble());
-            scanner.nextLine();
+            if (produkt != null) {
 
-            System.out.println("Geben Sie bitte eine Beschreibung an");
-            String updateBeschreibung = String.valueOf(scanner.next());
-            scanner.nextLine();
 
-            Produkt updateprodukt = new Produkt(id,updateProduktname,updatePreis,updateBeschreibung);
-            database.update(updateprodukt);
+                if (CheckBearbeiten("Möchten Sie die Produkt Name bearbeiten? Y/N")) {
+                    System.out.println("Geben Sie bitte ein Produkt Name an: ");
+                    String updateProduktname = scanner.nextLine();
+                    produkt.setProdukte_name(updateProduktname);
+                }
 
-            System.out.println("Möchten Sie andere Produkte aktualiesieren: Y/N");
 
-            String antwort = scanner.next().toLowerCase();
+                if (CheckBearbeiten("Möchten Sie den Preis bearbeiten? Y/N")) {
+                    System.out.println("Geben Sie bitte ein Preis an");
+                    double updatePreis = Double.valueOf(scanner.nextDouble());
+                    produkt.setPreis(updatePreis);
+                    scanner.nextLine();
+                }
 
-            if(antwort.equals("y")){
-                weiter = false;
-            }else if (antwort.equals("n")){
-                weiter = true;
-            }else {
-                System.out.println("Geben Sie bitte: Y/N");
+
+                if (CheckBearbeiten("Möchten Sie die Beschreibung bearbeiten? Y/N")) {
+                    System.out.println("Geben Sie bitte eine Beschreibung an");
+                    String updateBeschreibung = String.valueOf(scanner.next());
+
+                    produkt.setBeschreibung(updateBeschreibung);
+                }
+
+                database.update(produkt);
+
+                System.out.println("Möchten Sie andere Produkte aktualiesieren Y/N:");
+
+                String antwort = scanner.next().toLowerCase();
+
+                if (antwort.equals("y")) {
+                    weiter = false;
+                } else if (antwort.equals("n")) {
+                    weiter = true;
+                } else {
+                    System.out.println("Geben Sie bitte: Y/N");
+                }
+            } else {
+                System.out.println("Produkt");
             }
-
-        }while(!weiter);
+        }
+        while (!weiter);
     }
-    public void Delete(){
+
+
+    public void Delete() {
         do {
             database.read();
 
@@ -132,15 +152,30 @@ public class Myapp {
 
             System.out.println("Möchten Sie weiter Löschen: Y/N");
             String antwort = scanner.next().toLowerCase();
-            if(antwort.equals("y")){
+            if (antwort.equals("y")) {
                 weiter = false;
-            }else if (antwort.equals("n")){
+            } else if (antwort.equals("n")) {
                 weiter = true;
-            }else {
+            } else {
                 System.out.println("Geben Sie: Y/N");
             }
-        }while(!weiter);
+        } while (!weiter);
     }
 
 
-}
+
+    public boolean CheckBearbeiten(String s) {
+            System.out.println(s);
+            System.out.println("Wollen Sie bearbeiten");
+            System.out.println("Bitte waehlen sie:");
+
+
+//            Scanner input = new Scanner(System.in);
+            String auswahl = scanner.next();
+            scanner.nextLine();
+            if(auswahl.equals("J") || auswahl.equals("j")){
+                return true;
+            }
+            return false;
+        }
+    }
